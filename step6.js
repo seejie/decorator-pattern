@@ -21,6 +21,12 @@ Function.prototype.after = function (afterfn) {
 var axios = new XMLHttpRequest()
 axios.open('get', 'https://www.baidu.com')
 axios.withCredentials = true
+
+// 请求拦截
+var request = _ => console.log('-----请求拦截器-----\n')
+axios.send = axios.send.before(request)
+// XMLHttpRequest.prototype.send = XMLHttpRequest.prototype.send.before(request)
+
 axios.send()
 axios.onreadystatechange = function () {
   if (axios.readyState === 4 && axios.status === 200) {
@@ -28,9 +34,8 @@ axios.onreadystatechange = function () {
   }
 }
 
-// 请求拦截
-var request = _ => console.log('-----请求拦截器-----\n')
-axios.send = axios.send.before(request)
 // 响应拦截
 var response = _ => console.log('-----响应拦截器-----\n')
+// readyState 会经历从1->2->3->4的过程,
+// 不判断readyState === 4 会被多次调用
 axios.onreadystatechange = axios.onreadystatechange.after(response)
